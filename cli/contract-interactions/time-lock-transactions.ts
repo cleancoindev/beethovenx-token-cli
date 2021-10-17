@@ -48,7 +48,7 @@ export async function queueTimelockTransaction(
     // currently possible only by manual interaction
     const timelockFunctionFragment =
       timelockContract.interface.getFunction("queueTransaction");
-    stdout.printInfo(`Contract address: ${targetContract.address}`);
+    stdout.printInfo(`\nContract address: ${timelockContract.address}`);
     stdout.printInfo(
       `Data: ${timelockContract.interface.encodeFunctionData(
         timelockFunctionFragment,
@@ -113,6 +113,21 @@ export async function executeTimelockTransaction(
 
   if (gnosis) {
     // currently possible only by manual interaction
+    const timelockFunctionFragment =
+      timelockContract.interface.getFunction("executeTransaction");
+    stdout.printInfo(`\nContract address: ${timelockContract.address}`);
+    stdout.printInfo(
+      `Data: ${timelockContract.interface.encodeFunctionData(
+        timelockFunctionFragment,
+        [
+          transaction.targetContract.address,
+          transaction.value,
+          0,
+          data,
+          transaction.eta,
+        ]
+      )}`
+    );
     const answers = await inquirer.prompt([
       {
         name: "confirmed",
