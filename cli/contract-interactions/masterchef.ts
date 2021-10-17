@@ -1,6 +1,6 @@
 import { ethers, network } from "hardhat";
 import { scriptConfig } from "../cli-config";
-import { manageTimelockTransaction } from "./time-lock-transactions";
+import { queueTimelockTransaction } from "./time-lock-transactions";
 import { BeethovenxMasterChef } from "../../types";
 import { BigNumber } from "ethers";
 import { stdout } from "../utils/stdout";
@@ -28,22 +28,18 @@ export async function timelocked_addMasterChefPool(
   eta: number
 ) {
   const [signer] = await ethers.getSigners();
-  return manageTimelockTransaction(
-    signer,
-    {
-      targetContract: {
-        name: "BeethovenxMasterChef",
-        address: config.contractAddresses.MasterChef,
-      },
-      value: 0,
-      targetFunction: {
-        identifier: "add",
-        args: [allocationPoints, lpAddress, rewarderAddress],
-      },
-      eta: eta,
+  return queueTimelockTransaction(signer, {
+    targetContract: {
+      name: "BeethovenxMasterChef",
+      address: config.contractAddresses.MasterChef,
     },
-    "queue"
-  );
+    value: 0,
+    targetFunction: {
+      identifier: "add",
+      args: [allocationPoints, lpAddress, rewarderAddress],
+    },
+    eta: eta,
+  });
 }
 
 export async function setMasterChefPool(
@@ -74,22 +70,18 @@ export async function timelocked_setMasterChefPool(
   eta: number
 ) {
   const [signer] = await ethers.getSigners();
-  return manageTimelockTransaction(
-    signer,
-    {
-      targetContract: {
-        name: "BeethovenxMasterChef",
-        address: config.contractAddresses.MasterChef,
-      },
-      value: 0,
-      targetFunction: {
-        identifier: "set",
-        args: [pid, allocationPoints, rewarderAddress, overwriteRewarder],
-      },
-      eta: eta,
+  return queueTimelockTransaction(signer, {
+    targetContract: {
+      name: "BeethovenxMasterChef",
+      address: config.contractAddresses.MasterChef,
     },
-    "queue"
-  );
+    value: 0,
+    targetFunction: {
+      identifier: "set",
+      args: [pid, allocationPoints, rewarderAddress, overwriteRewarder],
+    },
+    eta: eta,
+  });
 }
 
 export async function updateEmissionRate(beetsPerBlock: BigNumber) {
@@ -107,22 +99,18 @@ export async function timelocked_updateEmissionRate(
   eta: number
 ) {
   const [signer] = await ethers.getSigners();
-  return manageTimelockTransaction(
-    signer,
-    {
-      targetContract: {
-        name: "BeethovenxMasterChef",
-        address: config.contractAddresses.MasterChef,
-      },
-      value: 0,
-      targetFunction: {
-        identifier: "updateEmissionRate",
-        args: [beetsPerBlock],
-      },
-      eta: eta,
+  return queueTimelockTransaction(signer, {
+    targetContract: {
+      name: "BeethovenxMasterChef",
+      address: config.contractAddresses.MasterChef,
     },
-    "queue"
-  );
+    value: 0,
+    targetFunction: {
+      identifier: "updateEmissionRate",
+      args: [beetsPerBlock],
+    },
+    eta: eta,
+  });
 }
 
 export async function setTreasuryAddress(address: string) {
@@ -140,22 +128,18 @@ export async function timelocked_setTreasuryAddress(
   eta: number
 ) {
   const [signer] = await ethers.getSigners();
-  return manageTimelockTransaction(
-    signer,
-    {
-      targetContract: {
-        name: "BeethovenxMasterChef",
-        address: config.contractAddresses.MasterChef,
-      },
-      value: 0,
-      targetFunction: {
-        identifier: "treasury",
-        args: [address],
-      },
-      eta: eta,
+  return queueTimelockTransaction(signer, {
+    targetContract: {
+      name: "BeethovenxMasterChef",
+      address: config.contractAddresses.MasterChef,
     },
-    "queue"
-  );
+    value: 0,
+    targetFunction: {
+      identifier: "treasury",
+      args: [address],
+    },
+    eta: eta,
+  });
 }
 
 export async function listPools() {

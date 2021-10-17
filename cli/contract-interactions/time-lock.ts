@@ -2,7 +2,10 @@ import path from "path";
 import fs from "fs";
 import { ethers, network } from "hardhat";
 import { scriptConfig } from "../cli-config";
-import { manageTimelockTransaction } from "./time-lock-transactions";
+import {
+  executeTimelockTransaction,
+  queueTimelockTransaction,
+} from "./time-lock-transactions";
 import { StoredTimelockTransaction, TimelockTransactionAction } from "../types";
 
 const storedTransactions: Record<
@@ -20,22 +23,18 @@ export async function timelocked_setPendingTimelockAdmin(
 ) {
   const [signer] = await ethers.getSigners();
 
-  return manageTimelockTransaction(
-    signer,
-    {
-      targetContract: {
-        name: "Timelock",
-        address: config.contractAddresses.Timelock,
-      },
-      targetFunction: {
-        identifier: "setPendingAdmin",
-        args: [pendingAdminAddress],
-      },
-      value: 0,
-      eta,
+  return queueTimelockTransaction(signer, {
+    targetContract: {
+      name: "Timelock",
+      address: config.contractAddresses.Timelock,
     },
-    type
-  );
+    targetFunction: {
+      identifier: "setPendingAdmin",
+      args: [pendingAdminAddress],
+    },
+    value: 0,
+    eta,
+  });
 }
 
 export async function setPendingTimelockAdmin(address: string) {
@@ -88,22 +87,7 @@ export async function getTimelockSettings() {
 export async function executeTransaction(transactionId: string) {
   const [signer] = await ethers.getSigners();
   const transaction = storedTransactions[transactionId];
-  const txHash = await manageTimelockTransaction(
-    signer,
-    transaction,
-    "execute"
-  );
+  const txHash = await executeTimelockTransaction(signer, transactionId);
 
-  fs.writeFileSync(
-    path.join(__dirname, `../../.timelock/transactions.${network.name}.json`),
-    JSON.stringify({
-      ...storedTransactions,
-      [transactionId]: {
-        ...transaction,
-        executed: true,
-        executeTxHash: txHash,
-      },
-    })
-  );
   return txHash;
 }
