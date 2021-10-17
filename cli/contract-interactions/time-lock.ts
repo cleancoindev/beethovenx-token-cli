@@ -7,6 +7,7 @@ import {
   queueTimelockTransaction,
 } from "./time-lock-transactions";
 import { StoredTimelockTransaction, TimelockTransactionAction } from "../types";
+import { stdout } from "../utils/stdout";
 
 const storedTransactions: Record<
   string,
@@ -48,15 +49,22 @@ export async function setPendingTimelockAdmin(address: string) {
   return receipt.transactionHash;
 }
 
-export async function acceptAdmin() {
-  const [signer] = await ethers.getSigners();
+export async function acceptAdmin(gnosis: boolean = true) {
   const timelock = await ethers.getContractAt(
     "Timelock",
     config.contractAddresses.Timelock
   );
-  const tx = await timelock.connect(signer).acceptAdmin();
-  const receipt = await tx.wait();
-  return receipt.transactionHash;
+  if (gnosis) {
+    const acceptAdminFunction = timelock.interface.getFunction("acceptAdmin");
+    const data = timelock.interface.encodeFunctionData(acceptAdminFunction);
+    stdout.printInfo(`\nContract address: ${timelock.address}`);
+    stdout.printInfo(`Data: ${data}`);
+  } else {
+    const [signer] = await ethers.getSigners();
+    const tx = await timelock.connect(signer).acceptAdmin();
+    const receipt = await tx.wait();
+    return receipt.transactionHash;
+  }
 }
 
 export async function getTimelockAdmin() {
