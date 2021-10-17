@@ -4,7 +4,9 @@ import { printNetwork } from "./utils/network";
 import { stdout } from "./utils/stdout";
 import { printCirculatingSupply } from "./contract-interactions/token";
 import {
+  approveTransaction,
   createSafe,
+  executeTransaction,
   listSafeOwners,
   safeAddresses,
 } from "./contract-interactions/gnosis";
@@ -57,6 +59,59 @@ async function main() {
         },
       ]);
       await listSafeOwners(answers.address);
+    });
+
+  program
+    .command("approve-tx")
+    .description("approve transaction")
+    .action(async () => {
+      const answers = await inquirer.prompt([
+        {
+          name: "address",
+          message: "select safe",
+          type: "list",
+          choices: safeAddresses,
+        },
+        {
+          name: "hash",
+          message: "tx hash",
+          type: "input",
+        },
+      ]);
+      stdout.printStep(
+        `Approving tx ${answers.hash} on safe ${answers.address}`
+      );
+      await approveTransaction(answers.address, answers.hash);
+      stdout.printStepDone();
+    });
+
+  program
+    .command("execute-tx")
+    .description("execute transaction")
+    .action(async () => {
+      // const answers = await inquirer.prompt([
+      //   {
+      //     name: "address",
+      //     message: "select safe",
+      //     type: "list",
+      //     choices: safeAddresses,
+      //   },
+      // ]);
+      // await listSafeOwners(answers.address);
+      await executeTransaction("0xce739F64D2CC2dd665eC59E8fDb18380Ca69c2B1", {
+        targetContract: {
+          name: "BeethovenxEarlyLudwigsNft",
+          address: "0xb302a31fcfebaf7b5ecb5ca96e4035957257f765",
+        },
+        value: "0",
+        targetFunction: {
+          identifier: "mint",
+          args: [
+            "0xF0876d373c68642C2827518F73F630aC2D58058C",
+            "ipfs://QmPYmGDuzdstCJX6dzES3JTL98NQtTM67i4jqsHWzgW2Dr",
+          ],
+        },
+      });
     });
 
   await program.parseAsync(process.argv);

@@ -1,7 +1,7 @@
 import { LedgerSigner } from "@ethersproject/hardware-wallets";
 import { ethers } from "hardhat";
 
-const accountId = process.env.LEDGER_ACCOUNT_ID;
+const accountId = process.env.LEDGER_ACCOUNT_ID || "0";
 
 const type = "hid";
 const path = `m/44'/60'/0'/0/${accountId}`;

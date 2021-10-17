@@ -1,17 +1,30 @@
 import Safe, {
+  ContractNetworksConfig,
   EthersAdapter,
   SafeAccountConfig,
   SafeFactory,
 } from "@gnosis.pm/safe-core-sdk";
-import { ethers } from "ethers";
 import { getSigner } from "../accounts";
 import { stdout } from "../utils/stdout";
 import { scriptConfig } from "../cli-config";
-import { network } from "hardhat";
+import { ethers, network } from "hardhat";
+
+export type GnosisTransaction = {
+  targetContract: {
+    name: string;
+    address: string;
+  };
+  targetFunction: {
+    identifier: string;
+    args: any[];
+  };
+  // eth sent with transaction
+  value: string;
+};
 
 const config = scriptConfig[network.config.chainId!];
 
-const contractNetworks = {
+const contractNetworks: ContractNetworksConfig = {
   250: {
     safeProxyFactoryAddress: "0xc3C41Ab65Dabe3ae250A0A1FE4706FdB7ECEB951",
     multiSendAddress: "0xd1b160Ee570632ac402Efb230d720669604918e8",
@@ -44,19 +57,57 @@ export async function approveTransaction(safeAddress: string, txHash: string) {
   const safeSdk: Safe = await Safe.create({
     ethAdapter: await getAdapter(),
     safeAddress,
+    contractNetworks,
   });
 
+  console.log("blabla");
   const approveTxResponse = await safeSdk.approveTransactionHash(txHash);
   await approveTxResponse.transactionResponse?.wait();
 }
 
-export async function executeTransaction(safeAddress: string, txHash: string) {
+export async function executeTransaction(
+  safeAddress: string,
+  transaction: GnosisTransaction
+) {
   // const safeSdk: Safe = await Safe.create({
   //   ethAdapter: await getAdapter(),
   //   safeAddress,
+  //   contractNetworks,
+  // });
+
+  console.log(safeAddress);
+  const safeSdk: Safe = await Safe.create({
+    ethAdapter: await getAdapter(),
+    safeAddress: safeAddress,
+    contractNetworks,
+  });
+  const targetContract = await ethers.getContractAt(
+    transaction.targetContract.name,
+    transaction.targetContract.address
+  );
+
+  // encode function data with params
+  const functionFragment = targetContract.interface.getFunction(
+    transaction.targetFunction.identifier
+  );
+  const data = targetContract.interface.encodeFunctionData(
+    functionFragment,
+    transaction.targetFunction.args
+  );
+  console.log("create");
+  stdout.printInfo(`to: ${targetContract.address}`);
+  stdout.printInfo(`data: \n ${data}`);
+  // const safeTransaction = await safeSdk.createTransaction({
+  //   data,
+  //   value: transaction.value,
+  //   to: transaction.targetContract.address,
   // });
   //
-  // const approveTxResponse = await safeSdk.executeTransaction(txHash);
+  // console.log("done", JSON.stringify(safeTransaction));
+  // const txHash = await safeSdk.getTransactionHash(safeTransaction);
+  // console.log("tx", txHash);
+  // const approveTxResponse = await safeSdk.executeTransaction(safeTransaction);
+  // console.log("await");
   // await approveTxResponse.transactionResponse?.wait();
 }
 

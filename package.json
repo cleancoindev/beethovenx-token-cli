@@ -12,7 +12,7 @@
     "timelock": "ts-node -r dotenv/config --transpile-only cli/time-lock.ts",
     "vesting": "ts-node -r dotenv/config --transpile-only cli/vesting.ts",
     "token": "ts-node -r dotenv/config --transpile-only cli/token.ts",
-    "gnosis": "ts-node -r dotenv/config --transpile-only cli/gnosis.ts"
+    "gnosis": "ts-node -r dotenv/config cli/gnosis.ts"
   },
   "devDependencies": {
     "@ethersproject/hardware-wallets": "^5.4.0",
