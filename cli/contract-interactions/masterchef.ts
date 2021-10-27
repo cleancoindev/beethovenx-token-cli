@@ -148,6 +148,7 @@ export async function listPools() {
     config.contractAddresses.MasterChef
   )) as BeethovenxMasterChef;
   const poolsLength = await chef.poolLength();
+  stdout.printInfo(`Total pools: ${poolsLength}`)
   for (let pid = 0; pid < poolsLength.toNumber(); pid++) {
     const { allocPoint, accBeetsPerShare, lastRewardBlock } =
       await chef.poolInfo(pid);
