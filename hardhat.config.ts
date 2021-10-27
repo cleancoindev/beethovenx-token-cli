@@ -16,7 +16,7 @@ import { HardhatUserConfig } from "hardhat/config";
 
 const signer = process.env.SIGNER
   ? `0x${process.env.SIGNER}`
-  : "0x0000000000000000000000000000000000000000";
+  : "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 const accounts = [signer];
 
