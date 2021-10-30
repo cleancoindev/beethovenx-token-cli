@@ -28,12 +28,12 @@ export const timelockQueueQuestions = [
     name: "eta",
     type: "number",
     message: `eta when to be executed on timelock (default: ${
-      isMainnet ? "6h + 20min" : "12mins"
+      isMainnet ? "8h (2h to sign)" : "12mins"
     })`,
     when: (answers: any) => answers.timelock,
     default: isMainnet
       ? moment()
-          .add(6 * 60 + 20, "minutes")
+          .add(8 * 60, "minutes")
           .unix()
       : moment().add(12, "minutes").unix(),
   },
