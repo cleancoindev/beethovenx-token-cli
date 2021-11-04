@@ -28,7 +28,7 @@ export const timelockQueueQuestions = [
     name: "eta",
     type: "number",
     message: `eta when to be executed on timelock (default: ${
-      isMainnet ? "8h (2h to sign)" : "12mins"
+      isMainnet ? "7h(1h to sign)" : "12mins"
     })`,
     when: (answers: any) => answers.timelock,
     default: isMainnet
