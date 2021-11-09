@@ -58,7 +58,7 @@ const config: HardhatUserConfig = {
       saveDeployments: true,
     },
     fantom: {
-      url: "https://rpcapi.fantom.network",
+      url: "https://rpc.ftm.tools/",
       accounts,
       chainId: 250,
       live: true,
