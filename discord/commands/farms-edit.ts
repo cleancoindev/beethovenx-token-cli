@@ -63,7 +63,6 @@ export const farmsEdit: CommandHandler = {
       option
         .setName("rewarder_address")
         .setDescription("Rewarder contract address")
-        .setRequired(false)
     )
     .addNumberOption((option) =>
       option.setName("eta").setDescription("Time of execution (defaults to 8h)")
