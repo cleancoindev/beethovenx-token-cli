@@ -28,7 +28,7 @@ async function execute(interaction: CommandInteraction) {
 
 export const timelockListTx: CommandHandler = {
   definition: new SlashCommandBuilder()
-    .setName("timelock_list_ready_tx")
+    .setName("timelock_list_tx")
     .setDescription("List transactions ready to execute")
     .addBooleanOption((option) =>
       option
